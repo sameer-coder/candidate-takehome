@@ -1,6 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const { Op } = require("sequelize");
 const db = require('./models');
+
 
 const app = express();
 
@@ -51,6 +53,31 @@ app.put('/api/games/:id', (req, res) => {
     });
 });
 
+app.post('/api/games/search', (req, res) => {
+  const { name, platform } = req.body;
+  let whereQuery = {};
+  // If one of the parameters is missing
+  if((name && !platform) ||(!name && platform)) {
+    const errResult = {status:"ERROR", msg:"Missing mandatory parameter"};
+    return res.status(400).json(errResult);
+  }
+
+  if((name && platform)) {
+    whereQuery = {
+      where: {
+        name: { [Op.like]: '%' + name + '%' },
+        platform: { [Op.eq]: platform }
+      }
+    }
+  }
+
+  return db.Game.findAll(whereQuery)
+  .then(game => res.send(game))
+  .catch((err) => {
+    console.log('***There was an error searching for the game', JSON.stringify(err));
+    return res.status(400).send(err);
+  });
+});
 
 app.listen(3000, () => {
   console.log('Server is up on port 3000');
