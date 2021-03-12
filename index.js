@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const { Op } = require("sequelize");
 const db = require('./models');
+const topGames = require('./top_games.json');
 
 
 const app = express();
@@ -78,6 +79,20 @@ app.post('/api/games/search', (req, res) => {
     return res.status(400).send(err);
   });
 });
+
+
+app.post('/api/games/populate', (req, res) => {
+  for (const game of topGames) {
+    const { publisherId, name, platform, storeId, bundleId, appVersion, isPublished } = game;
+    db.Game.create({ publisherId, name, platform, storeId, bundleId, appVersion, isPublished })
+    .catch((err) => {
+      console.log('***There was an error creating a game', JSON.stringify(err));
+      return res.status(400).send(err);
+    });
+  }
+  return res.send({status:"Success", msg:"All Games populated"})
+});
+
 
 app.listen(3000, () => {
   console.log('Server is up on port 3000');
