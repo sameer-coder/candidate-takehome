@@ -54,6 +54,84 @@ The business goal of the game database is to provide an internal service to get 
 
 #### Question 1
 For you what is missing in the project to make it production ready?
+#### Answer
+There are quite a few things missing to make it production ready. Following is the list:
+1. Security  
+At the moment there are no security measures in place. We can use "helmet" module to implement several different middlewares which add to the security
+
+2. Routes  
+Routes need to seperated from index.js into their own directory. We can further split the routes depending on the module/functionality. Also route for 404 page not found is missing
+
+3. Authentication  
+Authentication is missing and we can add a token based authentication even though the app is internal only.
+
+4. Logging  
+We can use packages like pino logger/winston to implement structured logging in json format which makes it easy for debugging and gathering information later. It will also allow us to use different logging levels based on the environment
+
+5. Validation  
+Inputs from the front end are not validated. We need to implement validation and reject the request early if validation fails. We can use validator.js or express-validator for this purpose.
+
+6. Config  
+Config needs to be have seperate files for dev, staging and production
+
+7. Error handling  
+We can add a package like Sentry to log all errors to a centralized place which enables developers to respond to error faster. We can also add a global error handler to catch any unhandled exceptions.
+
+8. Testing  
+Unit tests are missing negative test(scenarios where the input is invalid). Integration tests also need to be added. There is no way to check coverage. nyc is a good package which works with mocha to provide code coverage
+
+9. Https support  
+Https support needs to be added. At the moment its only working on http
+
+10. Mechanism to fetch top 100 games from play store/app store  
+At the moment the top 100 games are loaded from a json file for simplicity. We need to call the play store/app store apis to fetch the data directly from their sources.
+
+11. Docker  
+We can dockerize the application so that we can spin up multiple instances with minimum effort.
+
+12. Appliacation Performance Monitoring (APM)  
+An APM like New Relic should be integrated in code to get realtime performance and error metrics.  
 
 #### Question 2
 To achieve the final business goal what is your Roadmap and Action plan?
+#### Answer
+**Objective**  : We need to get data for all apps from all different app stores and expose it as an API service to be used by other teams.  
+
+**RoadMap**  
+- Data feasibility Analysis  
+- Technical discussion on implementation approaches  
+- Integrate all app stores into the application  
+- Implement test suite with good code coverage  
+- Add SSL certificates  
+- Check security practices  
+- Dockerize application  
+- Deploy to staging  
+- QA automated testing  
+- Load testing  
+- Create API documentation  
+- Create a deployment checklist
+- Deploy the service
+- Collect feedback from other teams using the service  
+
+*Target deadline* - 2 weeks
+
+**Challenges**    
+If the app store apis provide partial data or have rate limits then find alternative way to retrieve remaining data
+
+**Action plan**  
+- Make a list of all different play stores from which data has to be collected  
+- Check if the api provided by the stores have any kind of limits on data collection at repeated intervals  
+- Design the database schema in such a way that queries can be optimized  
+- Add appropriate database indexed  
+- Upgrade Node.js and other technologies to latest versions so that we can leverage performance improvements  
+- Write code for pulling data from different sources and refreshing the data at periodic intervals  
+- Use mocha and chai for writing unit tests and nyc for code coverage  
+- Add https support to the code
+- Implement security measures in code by using different security packages available for Node.js
+- Audit for vulnerabilities in code  
+- Dockerize the application  
+- Deploy the application to staging environment  
+- QA will run automated tests and provide the sign off
+- Load test the application by simulating load  
+- Check if the application passes the deployment checklist  
+- Deploy the application to production  
