@@ -131,3 +131,47 @@ describe('GET /api/games', function () {
     });
 });
 
+
+/**
+ * Testing search games endpoint
+ */
+describe('POST /api/games/search', function () {
+    const validGameAndPlatform = {
+        name: "Hel",
+        platform: "ios"
+    }
+    it('should return matching search results (Valid Platform and Game)', function (done) {
+        request(app)
+            .post('/api/games/search')
+            .send(validGameAndPlatform)
+            .set('Accept', 'application/json')
+            .expect('Content-Type', /json/)
+            .expect(200)
+            .end((err, result) => {
+                if (err) return done(err);
+                assert.strictEqual(result.body.name, 'Helix Jump');
+                assert.strictEqual(result.body.platform, 'ios');
+                done();
+            });
+    });
+
+    const InvalidGame = {
+        name: "DoesntExist",
+        platform: "ios"
+    }
+    it('should return matching search results (Valid Platform and Game) ', function (done) {
+        request(app)
+            .post('/api/games/search')
+            .send(InvalidGame)
+            .set('Accept', 'application/json')
+            .expect('Content-Type', /json/)
+            .expect(400)
+            .end((err, result) => {
+                if (err) return done(err);
+                result.should.have.status(400)
+                done();
+            });
+    });
+
+
+});
